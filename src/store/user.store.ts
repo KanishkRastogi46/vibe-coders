@@ -1,14 +1,15 @@
 import { create } from 'zustand';
 
 interface User {
+    _id: string,
     email: string,
     fullname: string,
     profile: string,
 };
 
 interface Chat {
-    userQuestion: string,
-    geminiAnswer: string
+    prompt: string,
+    response: string
 };
 
 interface UserStore {
@@ -21,6 +22,7 @@ interface UserStore {
 const userStore = create<UserStore>()( set => {
     return {
         user: {
+            _id: "",
             email: "",
             fullname: "",
             profile: ""

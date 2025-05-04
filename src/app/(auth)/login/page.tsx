@@ -17,6 +17,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import apiInstance from "@/utils/axios"
+import Link from "next/link"
+import userStore from "@/store/user.store"
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -38,6 +40,8 @@ export default function LoginPage() {
 
   const router = useRouter();
 
+  const setUser = userStore((state) => state.setUser);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       console.log(data);
@@ -47,13 +51,14 @@ export default function LoginPage() {
       });
       if (response.data.success === true) {
         toast.success("Login successful", {
-          description: "You can now logged in to your account.",
+          description: "You are now logged in to your account.",
           action: {
             label: "close",
             onClick: () => toast.dismiss(),
           }
         })
-        router.push("/code-gen");
+        setUser(response.data.user);
+        router.push("/welcome");
       }
       else toast.error("Login failed", {
             description: response.data.message,
@@ -64,24 +69,23 @@ export default function LoginPage() {
           })
     
     } catch (error) {
-      console.error("Registration error:", error)
-      toast.error("Registration failed", {
-        description: "There was an error processing your registration.",
+      console.error("Login error:", error)
+      toast.error("Login failed", {
+        description: "There was an error processing your login.",
         action: {
           label: "close",
           onClick: () => toast.dismiss(),
         }
       })
     }
-    // Here you would handle the login process
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 bg-slate-50">
-      <Card className="w-full max-w-md shadow-lg">
+    <div className="flex justify-center items-center min-h-screen p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <Card className="w-full max-w-md shadow-lg border border-purple-700/30 bg-slate-800/90 backdrop-blur-sm">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-2xl font-bold text-center text-white">Welcome back</CardTitle>
+          <CardDescription className="text-center text-gray-300">
             Sign in to your account to continue
           </CardDescription>
         </CardHeader>
@@ -93,9 +97,14 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-gray-200">Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="example@example.com" {...field} />
+                      <Input 
+                        type="email" 
+                        placeholder="example@example.com" 
+                        {...field} 
+                        className="bg-slate-700/60 border-purple-700/40 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -107,9 +116,14 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-gray-200">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input 
+                        type="password" 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="bg-slate-700/60 border-purple-700/40 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -118,26 +132,30 @@ export default function LoginPage() {
               
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="remember" className="rounded border-gray-300 text-primary focus:ring-primary" />
-                  <label htmlFor="remember" className="text-sm text-gray-600">Remember me</label>
+                  <input 
+                    type="checkbox" 
+                    id="remember" 
+                    className="rounded border-purple-700/40 bg-slate-700/60 text-primary focus:ring-purple-500" 
+                  />
+                  <label htmlFor="remember" className="text-sm text-gray-300">Remember me</label>
                 </div>
-                <a href="/forgot-password" className="text-sm text-primary hover:underline">
+                <Link href="/forgot-password" className="text-sm text-white hover:text-primary/90 hover:underline">
                   Forgot password?
-                </a>
+                </Link>
               </div>
               
-              <Button type="submit" className="w-full mt-6">
+              <Button type="submit" className="w-full mt-6 bg-primary hover:bg-primary/90">
                 Sign in
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-300">
             Don't have an account?{" "}
-            <a href="/register" className="text-primary underline hover:text-primary/90">
+            <Link href="/register" className="text-white hover:text-primary/90 hover:underline">
               Create account
-            </a>
+            </Link>
           </p>
         </CardFooter>
       </Card>

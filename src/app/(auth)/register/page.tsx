@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import apiInstance from "@/utils/axios"
+import Link from "next/link"
 
 const FormSchema = z.object({
   fullName: z.string().min(2, {
@@ -84,15 +85,14 @@ export default function RegisterPage() {
         }
       })
     }
-    // Here you would handle the registration process
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 bg-slate-50">
-      <Card className="w-full max-w-md shadow-lg">
+    <div className="flex justify-center items-center min-h-screen p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <Card className="w-full max-w-md shadow-lg border border-purple-700/30 bg-slate-800/90 backdrop-blur-sm">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-2xl font-bold text-center text-white">Create an account</CardTitle>
+          <CardDescription className="text-center text-gray-300">
             Enter your information to create an account
           </CardDescription>
         </CardHeader>
@@ -104,9 +104,13 @@ export default function RegisterPage() {
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel className="text-gray-200">Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} />
+                      <Input 
+                        placeholder="John Doe" 
+                        {...field} 
+                        className="bg-slate-700/60 border-purple-700/40 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -118,9 +122,14 @@ export default function RegisterPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-gray-200">Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="example@example.com" {...field} />
+                      <Input 
+                        type="email" 
+                        placeholder="example@example.com" 
+                        {...field} 
+                        className="bg-slate-700/60 border-purple-700/40 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,11 +141,16 @@ export default function RegisterPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-gray-200">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input 
+                        type="password" 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="bg-slate-700/60 border-purple-700/40 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+                      />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-gray-400">
                       Must be at least 8 characters with uppercase, lowercase, and number
                     </FormDescription>
                     <FormMessage />
@@ -149,27 +163,32 @@ export default function RegisterPage() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel className="text-gray-200">Confirm Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input 
+                        type="password" 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="bg-slate-700/60 border-purple-700/40 text-white placeholder:text-gray-400 focus-visible:ring-purple-500"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               
-              <Button type="submit" className="w-full mt-6">
+              <Button type="submit" className="w-full mt-6 bg-primary hover:bg-primary/90">
                 Create account
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-300">
             Already have an account?{" "}
-            <a href="/login" className="text-primary underline hover:text-primary/90">
+            <Link href="/login" className="text-white hover:text-primary/90 hover:underline">
               Sign in
-            </a>
+            </Link>
           </p>
         </CardFooter>
       </Card>

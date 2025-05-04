@@ -17,6 +17,7 @@ export async function POST(request: Request): Promise<any> {
                 message: "Invalid input",
                 status: 400,
                 errors: validation.error.errors.map(e => e.message).join(", "),
+                success: false,
             }, { status: 400 });
         }
         const user = await userModel.findOne({ email });
@@ -24,6 +25,7 @@ export async function POST(request: Request): Promise<any> {
             return Response.json({
                 message: "User not found",
                 status: 404,
+                success: false,
             }, { status: 404 });
         }
         const isPasswordValid = await compare(password, user.password);
@@ -31,22 +33,31 @@ export async function POST(request: Request): Promise<any> {
             return Response.json({
                 message: "Invalid password",
                 status: 401,
+                success: false,
             }, { status: 401 });
         }
         const token = sign({ id: user._id }, String(process.env.JWT_SECRET), { expiresIn: "1h" });
         const res = NextResponse.json({
             message: "Login successful",
             status: 200,
+            user: {
+                _id: user._id,
+                email: user.email,
+                fullname: user.fullname,
+                profile: "",
+            },
             success: true,
         }, { status: 200 });
         res.cookies.set("token", token, { httpOnly: true, maxAge: 60 * 60 });
         return res;
         
-    } catch (error) {
+    } catch (error: any) {
         console.log("Error in login:", error);
         return Response.json({
             message: "Internal server error",
             status: 500,
+            success: false,
+            error: error.message,
         }, { status: 500 });
     }
 }
