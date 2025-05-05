@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import userStore from "@/store/user.store";
+// import userStore from "@/store/user.store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Send, Code, Play, X, ChevronRight, ChevronLeft, Home, User, LogOut, RefreshCw } from "lucide-react";
@@ -38,7 +38,7 @@ const languageOptions = [
 
 export default function CodeGenPage() {
   const router = useRouter();
-  const { user } = userStore();
+  // const { user } = userStore();
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
