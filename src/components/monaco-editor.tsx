@@ -55,7 +55,7 @@ export function MonacoEditorComponent({ code, language, onChange }: MonacoEditor
         monacoEditorRef.current.dispose();
       }
     };
-  }, [language]); // Only recreate when language changes
+  }, [language, code, onChange]); // Only recreate when language changes
 
   // Update editor content when code prop changes
   useEffect(() => {

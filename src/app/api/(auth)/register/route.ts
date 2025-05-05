@@ -4,7 +4,7 @@ import { userRegisterSchema } from "@/utils/user.schema";
 import {hash} from "bcryptjs"
 
 
-export async function POST(request: Request): Promise<any> {
+export async function POST(request: Request) {
     try {
         await connectDB();
         const {
@@ -29,7 +29,7 @@ export async function POST(request: Request): Promise<any> {
                 status: 409,
             }, { status: 409 });
         }
-        const newUser = await userModel.create({
+        await userModel.create({
             fullname,
             email,
             password: await hash(password, 10),

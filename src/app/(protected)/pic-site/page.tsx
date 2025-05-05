@@ -7,7 +7,9 @@ import { useRouter } from "next/navigation";
 import userStore from "@/store/user.store";
 import { Button } from "@/components/ui/button";
 import { useDropzone } from "react-dropzone";
-import { Loader2, Code, Play, X, ChevronRight, ChevronLeft, Home, User, LogOut, RefreshCw, Upload, Image as ImageIcon } from "lucide-react";
+import { Loader2, 
+  // Code, 
+  Play, X, ChevronRight, ChevronLeft, Home, User, LogOut, RefreshCw, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import apiInstance from "@/utils/axios";
 import ReactMarkdown from "react-markdown";
@@ -30,7 +32,7 @@ const languageOptions = [
 
 export default function PicSitePage() {
   const router = useRouter();
-  const { user } = userStore();
+  // const { user } = userStore();
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -308,7 +310,7 @@ export default function PicSitePage() {
                 </h2>
                 <p className="text-gray-300 max-w-md mb-4">
                   Drag and drop an image, or click to select one from your files.
-                  We'll convert it into clean, responsive HTML/CSS code.
+                  We&apos;ll convert it into clean, responsive HTML/CSS code.
                 </p>
                 <Button className="bg-primary hover:bg-primary/90">
                   <Upload className="h-4 w-4 mr-2" />

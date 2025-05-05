@@ -2,7 +2,7 @@ import { createPartFromUri, createUserContent, GoogleGenAI } from "@google/genai
 
 const ai = new GoogleGenAI({ apiKey: String(process.env.GEMINI_API_KEY!) });
 
-var systemPrompt = `Your name is Autodev. You are a expert software engineer and your task is to help the user with queries related
+const systemPrompt = `Your name is Autodev. You are a expert software engineer and your task is to help the user with queries related
 to software development or related to computer science fundamentals. You should help the user with the best possible answer. When 
 asked a question, you should answer it in a very simple and easy to understand way. You should also provide code examples if needed.
 If asked a DSA question, you should provide the best possible solution and also provide the time and space complexity of the solution
@@ -19,8 +19,8 @@ export async function getResponseFromGemini(query: string): Promise<string> {
       },
     });
     return response?.text || "Sorry, I couldn't generate a response for this.";
-  } catch (error: any) {
-    console.error("Error generating response from Gemini:", error.message);
+  } catch (error) {
+    console.error("Error generating response from Gemini:", error);
     throw new Error("An error occurred while generating the response from Gemini.");
   }
 }
@@ -40,8 +40,8 @@ export async function getWebPageFromImageUsingGemini(imagePath: string): Promise
             ],
         });
         return response?.text || "Sorry, I couldn't generate a response for this.";
-    } catch (error: any) {
-        console.error("Error generating response from Gemini:", error.message);
+    } catch (error) {
+        console.error("Error generating response from Gemini:", error);
         throw new Error("An error occurred while generating the response from Gemini.");
     }
 }

@@ -39,7 +39,7 @@ export function FAQsSection() {
             <AccordionItem value="item-3" className="border-purple-800/30">
               <AccordionTrigger className="text-white hover:text-primary">What programming languages are supported?</AccordionTrigger>
               <AccordionContent className="text-gray-300">
-                AutoDev currently supports JavaScript, HTML, CSS, Python, Java, C++, Ruby, and more. We're continuously expanding our language support based on user feedback and demands.
+                AutoDev currently supports JavaScript, HTML, CSS, Python, Java, C++, Ruby, and more. We&apos;re continuously expanding our language support based on user feedback and demands.
               </AccordionContent>
             </AccordionItem>
             

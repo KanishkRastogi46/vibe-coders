@@ -44,7 +44,7 @@ export default function WelcomePage() {
             router.push("/login");
         });
     }
-  }, [user]);
+  }, [user, setUser, router]);
 
   useEffect(() => {
     // Set appropriate greeting based on time of day

@@ -6,7 +6,7 @@ import {sign} from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 
-export async function POST(request: Request): Promise<any> {
+export async function POST(request: Request) {
     try {
         await connectDB();
         const { email, password } = await request.json();
@@ -51,13 +51,13 @@ export async function POST(request: Request): Promise<any> {
         res.cookies.set("token", token, { httpOnly: true, maxAge: 60 * 60 });
         return res;
         
-    } catch (error: any) {
+    } catch (error) {
         console.log("Error in login:", error);
         return Response.json({
             message: "Internal server error",
             status: 500,
             success: false,
-            error: error.message,
+            error: "Something went wrong",
         }, { status: 500 });
     }
 }
