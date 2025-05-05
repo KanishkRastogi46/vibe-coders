@@ -16,15 +16,7 @@ export default function WelcomePage() {
   const [greeting, setGreeting] = useState("Welcome");
 
   useEffect(() => {
-    // Set appropriate greeting based on time of day
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good morning");
-    else if (hour < 18) setGreeting("Good afternoon");
-    else setGreeting("Good evening");
-  }, []);
-
-  useEffect(() => {
-    if (!user?.email) {
+    if (!user.email) {
         apiInstance.get("/get-user")
         .then((response) => {
             if (response.data.success) {
@@ -52,6 +44,14 @@ export default function WelcomePage() {
             router.push("/login");
         });
     }
+  }, [user]);
+
+  useEffect(() => {
+    // Set appropriate greeting based on time of day
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting("Good morning");
+    else if (hour < 18) setGreeting("Good afternoon");
+    else setGreeting("Good evening");
   }, []);
 
   const handleLogout = async () => {
@@ -79,26 +79,6 @@ export default function WelcomePage() {
   };
 
   console.log("User data:", user);
-
-  if (!user?.email) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <Card className="w-full max-w-md bg-slate-800/90 border border-purple-700/30">
-          <CardHeader>
-            <CardTitle className="text-white">Session Expired</CardTitle>
-            <CardDescription className="text-gray-300">
-              Your session has expired or you are not logged in.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button onClick={() => router.push("/login")} className="w-full">
-              Return to Login
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">

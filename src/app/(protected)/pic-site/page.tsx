@@ -173,7 +173,7 @@ export default function PicSitePage() {
 
   const handleLogout = async () => {
     try {
-      await apiInstance.post("/logout");
+      await apiInstance.get("/logout");
       toast.success("Logged out successfully", {
         description: "You have been logged out of your account.",
       });

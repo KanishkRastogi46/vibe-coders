@@ -4,7 +4,7 @@ interface User {
     _id: string,
     email: string,
     fullname: string,
-    profile: string,
+    profile?: string,
 };
 
 interface Chat {

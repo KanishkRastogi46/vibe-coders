@@ -18,7 +18,7 @@ export function HeroSection() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/register">
+              <Link href="/welcome">
                 <Button size="lg" className="w-full sm:w-auto bg-primary hover:bg-primary/90">
                   Get Started Free
                 </Button>
@@ -30,7 +30,7 @@ export function HeroSection() {
               </Link>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-300">
-              <span className="flex h-2 w-2 rounded-full bg-green-500"></span>
+              <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
               No credit card required • Its totally free
             </div>
           </div>

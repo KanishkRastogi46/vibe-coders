@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 
-const protectedRoutes = ['/code-gen', '/pic-site', '/profile', '/dashboard'];
+const protectedRoutes = ['/code-gen', '/pic-site', '/profile', '/welcome'];
  
 export async function middleware(request: NextRequest) {
   try {
@@ -37,5 +37,6 @@ export const config = {
     '/pic-site/:path*',
     '/profile/:path*',
     '/dashboard/:path*',
+    '/welcome/:path*',
   ]
 }
