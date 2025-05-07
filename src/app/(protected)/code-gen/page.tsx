@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Send, Code, Play, X, ChevronRight, ChevronLeft, Home, User, LogOut, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import apiInstance from "@/utils/axios";
+import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -17,24 +18,33 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { MonacoEditorComponent } from "@/components/monaco-editor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supportedLanguages } from "@/lib/piston.api";
 
-// Available languages for Monaco Editor
-const languageOptions = [
-  { value: "javascript", label: "JavaScript" },
-  { value: "typescript", label: "TypeScript" },
-  { value: "python", label: "Python" },
-  { value: "java", label: "Java" },
-  { value: "csharp", label: "C#" },
-  { value: "cpp", label: "C++" },
-  { value: "go", label: "Go" },
-  { value: "rust", label: "Rust" },
-  { value: "ruby", label: "Ruby" },
-  { value: "php", label: "PHP" },
-  { value: "sql", label: "SQL" },
-  { value: "html", label: "HTML" },
-  { value: "css", label: "CSS" },
-  { value: "json", label: "JSON" },
-];
+// Map Piston language names to Monaco editor language names
+const languageMap: { [key: string]: string } = {
+  "javascript": "javascript",
+  "typescript": "typescript",
+  "python": "python",
+  "java": "java",
+  "csharp.net": "csharp",
+  "c": "c",
+  "c++": "cpp",
+  "go": "go",
+  "rust": "rust",
+  "ruby": "ruby",
+  "php": "php",
+  "sqlite3": "sql",
+  "bash": "shell",
+  "powershell": "powershell"
+};
+
+// Format languages for the dropdown
+const languageOptions = supportedLanguages.map(lang => ({
+  value: lang.language,
+  label: lang.language.charAt(0).toUpperCase() + lang.language.slice(1),
+  version: lang.version,
+  aliases: lang.aliases
+}));
 
 export default function CodeGenPage() {
   const router = useRouter();
@@ -45,10 +55,20 @@ export default function CodeGenPage() {
   const [showEditor, setShowEditor] = useState(false);
   const [editorCode, setEditorCode] = useState("");
   const [editorLanguage, setEditorLanguage] = useState("javascript");
+  const [selectedLanguage, setSelectedLanguage] = useState(languageOptions[0]);
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const responseRef = useRef<HTMLDivElement>(null);
+
+  // Handle language change
+  const handleLanguageChange = (value: string) => {
+    const language = languageOptions.find(lang => lang.value === value);
+    if (language) {
+      setSelectedLanguage(language);
+      setEditorLanguage(languageMap[value] || value);
+    }
+  };
 
   // Scroll to response when it changes
   useEffect(() => {
@@ -85,9 +105,24 @@ export default function CodeGenPage() {
       // If code is detected in the response, extract it for the editor
       const codeMatch = responseContent.match(/```(\w+)?\s*([\s\S]*?)```/);
       if (codeMatch && codeMatch[2]) {
-        const language = codeMatch[1] || "javascript";
+        // Get the language from the code block
+        const codeLanguage = codeMatch[1]?.toLowerCase() || "javascript";
         setEditorCode(codeMatch[2].trim());
-        setEditorLanguage(language);
+        
+        // Try to find a matching Piston language
+        const pistonLang = languageOptions.find(
+          lang => lang.value === codeLanguage || lang.aliases.includes(codeLanguage)
+        );
+        
+        if (pistonLang) {
+          setSelectedLanguage(pistonLang);
+          setEditorLanguage(languageMap[pistonLang.value] || pistonLang.value);
+        } else {
+          // Default to JavaScript if no match
+          setSelectedLanguage(languageOptions[0]);
+          setEditorLanguage("javascript");
+        }
+        
         if (!isEditorOpen) {
           setShowEditor(true);
         }
@@ -107,16 +142,41 @@ export default function CodeGenPage() {
     setOutput("");
     
     try {
-      // Replace with your actual code execution API
-      const response = await apiInstance.post("/execute-code", {
-        code: editorCode,
-        language: editorLanguage,
+      // Call Piston API directly for code execution
+      const pistonResponse = await axios.post("https://emkc.org/api/v2/piston/execute", {
+        language: selectedLanguage.value,
+        version: selectedLanguage.version,
+        files: [
+          {
+            content: editorCode
+          }
+        ],
+        // Add arguments if needed
+        // args: []
       });
       
-      setOutput(response.data.output || "No output");
+      // Handle Piston API response
+      if (pistonResponse.data && pistonResponse.data.run) {
+        const { stdout, stderr, output, code } = pistonResponse.data.run;
+        
+        // Format and display the output
+        let formattedOutput = "";
+        
+        if (code !== 0) {
+          formattedOutput = `Execution error (code ${code}):\n${stderr || output || "No error details available"}`;
+        } else if (stderr && stderr.trim() !== "") {
+          formattedOutput = `Standard Error:\n${stderr}\n\nStandard Output:\n${stdout || "(No output)"}`;
+        } else {
+          formattedOutput = stdout || output || "Execution completed with no output.";
+        }
+        
+        setOutput(formattedOutput);
+      } else {
+        setOutput("Unexpected response format from code execution service.");
+      }
     } catch (error) {
       console.error("Error executing code:", error);
-      setOutput("Error executing code. Please check your syntax and try again.");
+      setOutput(`Error executing code: ${error instanceof Error ? error.message : "Unknown error"}`);
     } finally {
       setIsRunning(false);
     }
@@ -305,16 +365,16 @@ export default function CodeGenPage() {
                 <div className="flex items-center space-x-4">
                   <h2 className="text-white font-semibold">Code Editor</h2>
                   <Select
-                    value={editorLanguage}
-                    onValueChange={setEditorLanguage}
+                    value={selectedLanguage.value}
+                    onValueChange={handleLanguageChange}
                   >
                     <SelectTrigger className="w-[180px] bg-slate-800 border-purple-700/40 text-white">
                       <SelectValue placeholder="Select Language" />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-purple-700/40 text-white">
+                    <SelectContent className="bg-slate-800 border-purple-700/40 text-white max-h-60 overflow-y-auto">
                       {languageOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
-                          {option.label}
+                          {option.label} {option.version && `(${option.version})`}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -361,7 +421,7 @@ export default function CodeGenPage() {
               </div>
               <div className="flex-grow overflow-auto bg-black/50 p-4">
                 <pre className="text-gray-300 font-mono text-sm whitespace-pre-wrap">
-                  {output || "Code execution output will appear here"}
+                  {output || `Ready to execute ${selectedLanguage.label} code`}
                 </pre>
               </div>
             </div>

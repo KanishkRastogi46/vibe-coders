@@ -17,34 +17,38 @@ export default function WelcomePage() {
 
   useEffect(() => {
     if (!user.email) {
-        apiInstance.get("/get-user")
-        .then((response) => {
-            if (response.data.success) {
-                setUser(response.data.user);
-            } else {
-                toast.error("Failed to fetch user data", {
-                    description: "Please log in again.",
-                    action: {
-                        label: "Close",
-                        onClick: () => toast.dismiss(),
-                    },
-                });
-                router.push("/login");
-            }
-        })
-        .catch((error) => {
-            console.error("Error fetching user data:", error);
-            toast.error("Failed to fetch user data", {
-                description: "Please log in again.",
-                action: {
-                    label: "Close",
-                    onClick: () => toast.dismiss(),
-                },
-            });
-            router.push("/login");
-        });
+        getUserData();
     }
   }, [user, setUser, router]);
+
+  const getUserData = async () => {
+    try {
+      const response = await apiInstance.get("/get-user");
+      if (response.data.success) {
+        setUser(response.data.user);
+      }
+      else {
+        toast.error("Failed to fetch user data", {
+          description: "Please log in again.",
+          action: {
+              label: "Close",
+              onClick: () => toast.dismiss(),
+          },
+        });
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      toast.error("Failed to fetch user data", {
+        description: "Please log in again.",
+        action: {
+            label: "Close",
+            onClick: () => toast.dismiss(),
+        },
+      });
+      router.push("/login");
+    }
+  }
 
   useEffect(() => {
     // Set appropriate greeting based on time of day

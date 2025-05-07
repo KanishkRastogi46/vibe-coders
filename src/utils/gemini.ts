@@ -34,7 +34,7 @@ export async function getWebPageFromImageUsingGemini(imagePath: string): Promise
           model: "gemini-2.0-flash",
           contents: [
                 createUserContent([
-                "",
+                "Convert the image into HTML, CSS and JavaScript equivalent code only the frontend or UI not the backend. If the image can't be converted, return 'Failed to process image'. Use internal CSS and Javascript, add proper styling, include all the features, Make the code fully functional.",
                 createPartFromUri(image.uri as string, image.mimeType as string),
               ]),
             ],

@@ -60,6 +60,10 @@ export default function PicSitePage() {
     if (!file.type.startsWith('image/')) {
       toast.error("Invalid file type", {
         description: "Please upload an image file (JPEG, PNG, etc.)",
+        action: {
+          label: "Try Again",
+          onClick: () => toast.dismiss(),
+        },
       });
       return;
     }
@@ -95,7 +99,7 @@ export default function PicSitePage() {
       }, 500);
 
       // Send the image to the API
-      const apiResponse = await apiInstance.post("/image-to-code", formData, {
+      const apiResponse = await apiInstance.post("/image-to-web", formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -104,7 +108,7 @@ export default function PicSitePage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
       
-      const responseContent = apiResponse.data.response || "Sorry, I couldn't generate code from this image.";
+      const responseContent = apiResponse.data.data || "Sorry, I couldn't generate code from this image.";
       
       // Set the new response
       setResponse(responseContent);
