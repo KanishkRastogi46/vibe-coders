@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 
-const protectedRoutes = ['/code-gen', '/pic-site', '/profile', '/welcome'];
+const protectedRoutes = ['/code-gen', '/pic-site', '/profile', '/welcome',];
  
 export async function middleware(request: NextRequest) {
   try {

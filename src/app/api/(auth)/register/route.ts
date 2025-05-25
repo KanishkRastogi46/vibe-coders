@@ -2,6 +2,7 @@ import connectDB from "@/lib/dbConnect";
 import userModel from "@/models/users.model";
 import { userRegisterSchema } from "@/utils/user.schema";
 import {hash} from "bcryptjs"
+import sendVerificationEmail from "@/emails/email";
 
 
 export async function POST(request: Request) {
@@ -34,6 +35,20 @@ export async function POST(request: Request) {
             email,
             password: await hash(password, 10),
         });
+
+        const { success, error } = await sendVerificationEmail({
+            email,
+            name: fullname
+        })
+
+        if (!success) {
+            console.error("Error sending verification email:", error);
+            return Response.json({
+                message: "Failed to send verification email",
+                status: 500,
+                error: error || "Internal server error",
+            }, { status: 500 });
+        }
         return Response.json({  
             message: "User registered successfully",
             status: 201,

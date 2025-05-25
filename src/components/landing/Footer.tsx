@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Twitter, Linkedin, Facebook } from "lucide-react";
+import { Github, Twitter, Linkedin, Instagram, Mail } from "lucide-react";
 
 export function Footer() {
   return (
@@ -14,17 +14,20 @@ export function Footer() {
               Transforming development workflows with AI-powered coding solutions.
             </p>
             <div className="flex gap-4 mt-4">
-              <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
+              <Link href="https://github.com/KanishkRastogi46" className="text-gray-400 transition-colors">
                 <Github size={20} />
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
+              <Link href="https://x.com/_kanishk_2503" className="text-gray-400 transition-colors">
                 <Twitter size={20} />
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
+              <Link href="https://www.linkedin.com/in/kanishk-rastogi-63a024238/" className="text-gray-400 transition-colors">
                 <Linkedin size={20} />
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-primary transition-colors">
-                <Facebook size={20} />
+              <Link href="https://www.instagram.com/_kanishk_2503/" className="text-gray-400 transition-colors">
+                <Instagram size={20} />
+              </Link>
+              <Link href="mailto:kanishkrastogi46@gmail.com" className="text-gray-400 transition-colors">
+                <Mail size={20} />
               </Link>
             </div>
           </div>

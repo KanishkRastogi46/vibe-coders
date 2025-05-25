@@ -24,7 +24,7 @@ export function HeroSection() {
                 </Button>
               </Link>
               <Link href="#features">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-gray-400 text-white hover:bg-white/10">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-gray-400 text-black hover:bg-white/10">
                   Explore Features
                 </Button>
               </Link>

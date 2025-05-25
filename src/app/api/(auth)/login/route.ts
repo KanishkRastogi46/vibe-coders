@@ -36,6 +36,14 @@ export async function POST(request: Request) {
                 success: false,
             }, { status: 401 });
         }
+
+        if (!user.isVerified) {
+            return Response.json({
+                message: "Email not verified",
+                status: 403,
+                success: false,
+            }, { status: 403 });
+        }
         const token = sign({ id: user._id }, String(process.env.JWT_SECRET), { expiresIn: "1h" });
         const res = NextResponse.json({
             message: "Login successful",

@@ -84,7 +84,11 @@ export default function LoginPage() {
     <div className="flex justify-center items-center min-h-screen p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <Card className="w-full max-w-md shadow-lg border border-purple-700/30 bg-slate-800/90 backdrop-blur-sm">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center text-white">Welcome back</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center text-white">
+            <Link href="/" className="text-white">
+              AutoDev
+            </Link>
+          </CardTitle>
           <CardDescription className="text-center text-gray-300">
             Sign in to your account to continue
           </CardDescription>

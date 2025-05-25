@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { MonacoEditorComponent } from "@/components/monaco-editor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import uploadImage from "@/utils/storage";
 
 // Available languages for Monaco Editor
 const languageOptions = [
@@ -83,9 +84,10 @@ export default function PicSitePage() {
     reader.readAsDataURL(file);
 
     try {
-      // Create form data for the API
-      const formData = new FormData();
-      formData.append('image', file);
+      // // Create form data for the API
+      // const formData = new FormData();
+      // formData.append('image', file);
+      const imageUrl = await uploadImage(file);
 
       // Simulate progress
       const progressInterval = setInterval(() => {
@@ -99,11 +101,7 @@ export default function PicSitePage() {
       }, 500);
 
       // Send the image to the API
-      const apiResponse = await apiInstance.post("/image-to-web", formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const apiResponse = await apiInstance.post("/image-to-web", {imageUrl});
 
       clearInterval(progressInterval);
       setUploadProgress(100);
@@ -210,16 +208,17 @@ export default function PicSitePage() {
       <div className="bg-white rounded-md p-4 mt-4 h-full">
         <iframe
           srcDoc={htmlContent}
-          className="w-full h-full border-0"
+          className="w-full h-full border-0 overflow-hidden"
           title="HTML Preview"
           sandbox="allow-scripts"
+          style={{ display: 'block' }}
         />
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Navbar */}
       <header className="sticky top-0 z-10 bg-slate-900/90 backdrop-blur-sm border-b border-purple-800/30">
         <div className="container mx-auto px-4 py-3">
@@ -254,7 +253,7 @@ export default function PicSitePage() {
       </header>
 
       {/* Main content */}
-      <div className="flex flex-grow overflow-hidden">
+      <main className="flex-1 flex overflow-hidden">
         {/* Main response interface */}
         <div className={`flex flex-col w-full transition-all duration-300 ${isEditorOpen ? "lg:w-1/2" : "w-full"}`}>
           {/* Header */}
@@ -299,52 +298,33 @@ export default function PicSitePage() {
           </header>
           
           {/* Response container */}
-          <div className="flex-grow overflow-y-auto p-4">
-            {!uploadedImage && !response && !isLoading ? (
-              <div 
-                {...getRootProps()} 
-                className={`flex flex-col items-center justify-center h-full text-center p-8 border-2 border-dashed 
-                  ${isDragActive ? 'border-primary bg-primary/10' : 'border-purple-500/30'} 
-                  rounded-lg transition-colors cursor-pointer hover:border-primary hover:bg-primary/5`}
-              >
-                <input {...getInputProps()} />
-                <ImageIcon className="h-12 w-12 text-primary mb-4" />
-                <h2 className="text-white text-xl font-semibold mb-2">
-                  {isDragActive ? 'Drop your image here' : 'Upload a screenshot or image'}
-                </h2>
-                <p className="text-gray-300 max-w-md mb-4">
-                  Drag and drop an image, or click to select one from your files.
-                  We&apos;ll convert it into clean, responsive HTML/CSS code.
-                </p>
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Select Image
-                </Button>
-              </div>
-            ) : isLoading ? (
-              <div className="flex flex-col items-center justify-center h-full text-center p-8">
-                {uploadedImage && (
-                  <div className="relative w-64 h-64 mb-6 rounded-lg overflow-hidden border border-purple-500/30">
-                    <Image
-                      src={uploadedImage}
-                      alt="Uploaded image"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                )}
-                
-                <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-                <p className="text-gray-300 mb-4">Analyzing your image and generating code...</p>
-                <div className="w-full max-w-md">
-                  <Progress value={uploadProgress} className="h-2 bg-slate-700" />
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-4 h-full">
+              {!uploadedImage && !response && !isLoading ? (
+                <div 
+                  {...getRootProps()} 
+                  className={`flex flex-col items-center justify-center h-full text-center p-8 border-2 border-dashed 
+                    ${isDragActive ? 'border-primary bg-primary/10' : 'border-purple-500/30'} 
+                    rounded-lg transition-colors cursor-pointer hover:border-primary hover:bg-primary/5`}
+                >
+                  <input {...getInputProps()} />
+                  <ImageIcon className="h-12 w-12 text-primary mb-4" />
+                  <h2 className="text-white text-xl font-semibold mb-2">
+                    {isDragActive ? 'Drop your image here' : 'Upload a screenshot or image'}
+                  </h2>
+                  <p className="text-gray-300 max-w-md mb-4">
+                    Drag and drop an image, or click to select one from your files.
+                    We&apos;ll convert it into clean, responsive HTML/CSS code.
+                  </p>
+                  <Button className="bg-primary hover:bg-primary/90">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Select Image
+                  </Button>
                 </div>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {uploadedImage && (
-                  <div className="flex justify-center mb-6">
-                    <div className="relative w-full max-w-md h-64 rounded-lg overflow-hidden border border-purple-500/30">
+              ) : isLoading ? (
+                <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                  {uploadedImage && (
+                    <div className="relative w-64 h-64 mb-6 rounded-lg overflow-hidden border border-purple-500/30">
                       <Image
                         src={uploadedImage}
                         alt="Uploaded image"
@@ -352,31 +332,52 @@ export default function PicSitePage() {
                         className="object-contain"
                       />
                     </div>
+                  )}
+                  
+                  <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
+                  <p className="text-gray-300 mb-4">Analyzing your image and generating code...</p>
+                  <div className="w-full max-w-md">
+                    <Progress value={uploadProgress} className="h-2 bg-slate-700" />
                   </div>
-                )}
-                
-                {response && (
-                  <div 
-                    className="p-6 rounded-lg bg-slate-800/90 border border-purple-700/30 markdown-content text-gray-100 prose prose-invert max-w-none"
-                    ref={responseRef}
-                  >
-                    {renderMarkdown(response)}
-                  </div>
-                )}
-                
-                <div 
-                  {...getRootProps()} 
-                  className={`flex flex-col items-center justify-center p-6 border-2 border-dashed 
-                    ${isDragActive ? 'border-primary bg-primary/10' : 'border-purple-500/30'} 
-                    rounded-lg transition-colors cursor-pointer hover:border-primary hover:bg-primary/5 mt-4`}
-                >
-                  <input {...getInputProps()} />
-                  <p className="text-gray-300 text-center">
-                    Try another image? Drag and drop or click to select.
-                  </p>
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="flex flex-col h-full">
+                  {uploadedImage && (
+                    <div className="flex justify-center mb-6">
+                      <div className="relative w-full max-w-md h-64 rounded-lg overflow-hidden border border-purple-500/30">
+                        <Image
+                          src={uploadedImage}
+                          alt="Uploaded image"
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  
+                  {response && (
+                    <div 
+                      className="flex-1 p-6 rounded-lg bg-slate-800/90 border border-purple-700/30 markdown-content text-gray-100 prose prose-invert max-w-none [&>*:last-child]:mb-0"
+                      ref={responseRef}
+                    >
+                      {renderMarkdown(response)}
+                    </div>
+                  )}
+                  
+                  <div 
+                    {...getRootProps()} 
+                    className={`mt-6 flex flex-col items-center justify-center p-6 border-2 border-dashed 
+                      ${isDragActive ? 'border-primary bg-primary/10' : 'border-purple-500/30'} 
+                      rounded-lg transition-colors cursor-pointer hover:border-primary hover:bg-primary/5`}
+                  >
+                    <input {...getInputProps()} />
+                    <p className="text-gray-300 text-center">
+                      Try another image? Drag and drop or click to select.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         
@@ -460,7 +461,7 @@ export default function PicSitePage() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

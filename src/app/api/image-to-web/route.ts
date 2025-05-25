@@ -1,19 +1,22 @@
 import { NextRequest } from "next/server";
 import { getWebPageFromImageUsingGemini } from "@/utils/gemini";
-import { writeFile, unlink } from "fs/promises";
-import path from "path";
+// import { writeFile, unlink } from "fs/promises";
+// import path from "path";
+import axios from "axios";
 
 export async function POST(req:NextRequest) {
     try {
-        const formData = await req.formData();
-        // console.log("Form data received:", formData);
-        const file = formData.get("image") as File;
+        const { imageUrl } = await req.json();
+        // // console.log("Form data received:", formData);
+        // const file = formData.get("image") as File;
 
-        const imgData = Buffer.from(await file.arrayBuffer());
-        await writeFile(path.join(process.cwd(), "/public/uploads/", file.name), imgData);
-        const imagePath = path.join(process.cwd(), "public", "uploads", file.name);
-        const response = await getWebPageFromImageUsingGemini(imagePath);
-        await unlink(imagePath); // Delete the file after processing
+        // const imgData = Buffer.from(await file.arrayBuffer());
+        // await writeFile(path.join(process.cwd(), "/public/uploads/", file.name), imgData);
+        // const imagePath = path.join(process.cwd(), "public", "uploads", file.name);
+        let imageRes = await axios.get(`${String(process.env.SUPABASE_IMAGE_BASE_URL)}/${imageUrl}`, { responseType: 'arraybuffer' });
+        let imageData = Buffer.from(imageRes.data).toString('base64');
+        const response = await getWebPageFromImageUsingGemini(imageData, imageRes.headers['content-type']);
+        // await unlink(imagePath); // Delete the file after processing
 
         return Response.json({
             message: "Response generated successfully", 
@@ -22,7 +25,7 @@ export async function POST(req:NextRequest) {
         }, { status: 200 });
 
     } catch (error) {
-        console.log("Error occurred while generating response from Gemini API:", error);
+        console.log(error);
         return Response.json({
             message: "Error occurred while generating response from Gemini API",
             error: "Some error occurred while generating response from Gemini API",
