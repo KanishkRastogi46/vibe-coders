@@ -11,7 +11,7 @@ export default async function sendVerificationEmail({
   email,
   name
 }: SendVerificationEmailProps) {
-  const verificationLink = `${String(process.env.NEXT_PUBLIC_APP_URL)}/verify?email=${email}`;
+  const verificationLink = `${String(process.env.NEXT_PUBLIC_APP_URL)}/verify?email=${encodeURIComponent(email)}`;
 
   // Create a transporter object
   const transporter = createTransport({
