@@ -21,6 +21,7 @@ export default function VerifyPage({
   useEffect(() => {
     const verifyEmail = async () => {
       const email = (await searchParams).email as string;
+      console.log("Verifying email:", email);
       
       if (!email) {
         setError("Invalid verification link");

@@ -119,6 +119,7 @@ const button = {
   display: "inline-block",
   width: "100%",
   maxWidth: "300px",
+  padding: "10px",
 };
 
 const hr = {
